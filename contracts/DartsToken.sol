@@ -10,6 +10,7 @@ contract Darts is ERC20("Darts", "DARTS"), Ownable, ERC20Burnable {
 
     constructor() {
         //* mint 1 million DARTS to owner
+        //* OpenZeppelin contracts automatically update totalSupply when you mint or burn tokens
         _mint(msg.sender, cap);
         //* transfer ownership to owner
         //* the owner in this case is the account that deployed the contract

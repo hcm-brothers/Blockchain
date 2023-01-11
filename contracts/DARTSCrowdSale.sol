@@ -28,6 +28,7 @@ contract DARTSCrowdSale is Ownable {
         //* DARTS token address
         IERC20 icotoken
     ) {
+        //* these arguments are passed in by the deployer
         BNB_rate = bnb_rate;
         USDT_rate = usdt_rate;
         _wallet = wallet;
@@ -61,6 +62,7 @@ contract DARTSCrowdSale is Ownable {
             msg.sender.balance >= bnbAmount,
             "Insufficient account balance"
         );
+        //* transfer BNB from user to dev wallet
         payable(_wallet).transfer(bnbAmount);
         SafeERC20.safeTransfer(token, msg.sender, amount);
         emit BuyTokenByBNB(msg.sender, amount);
@@ -68,6 +70,8 @@ contract DARTSCrowdSale is Ownable {
 
     function buyTokenByUSDT(uint256 USDTAmount) external {
         uint256 amount = getTokenAmountUSDT(USDTAmount);
+        //! this is not working because msg.sender.balance is BNB balance not USDT balance
+        // EXPECT: need to find a way to check USDT balance of msg.sender
         require(
             msg.sender.balance >= USDTAmount,
             "Insufficient account balance"
@@ -77,7 +81,9 @@ contract DARTSCrowdSale is Ownable {
             token.balanceOf(address(this)) >= amount,
             "Insufficient account balance"
         );
+        //* transfer USDT from user to dev wallet
         SafeERC20.safeTransferFrom(usdtToken, msg.sender, _wallet, USDTAmount);
+        //* transfer DARTS from contract to user
         SafeERC20.safeTransfer(token, msg.sender, amount);
         emit BuyTokenByUSDT(msg.sender, amount);
     }
